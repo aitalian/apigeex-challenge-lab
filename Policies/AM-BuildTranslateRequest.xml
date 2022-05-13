@@ -1,53 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <AssignMessage continueOnError="false" enabled="true" name="AM-BuildTranslateRequest">
     <DisplayName>AM-BuildTranslateRequest</DisplayName>
-    <Properties/>
-    <Copy source="request">
-        <Headers/>
-        <QueryParams/>
-        <FormParams/>
-        <Payload/>
-        <Verb/>
-        <StatusCode/>
-        <ReasonPhrase/>
-        <Path/>
-    </Copy>
-    <Remove>
-        <Headers>
-            <Header name="h1"/>
-        </Headers>
-        <QueryParams>
-            <QueryParam name="q1"/>
-        </QueryParams>
-        <FormParams>
-            <FormParam name="f1"/>
-        </FormParams>
-        <Payload/>
-    </Remove>
-    <Add>
-        <Headers/>
-        <QueryParams/>
-        <FormParams/>
-    </Add>
-    <Set>
-        <Headers/>
-        <QueryParams/>
-        <FormParams/>
-        <Verb>POST</Verb>
-        <Path/>
-        <Payload contentType="application/json">
-            {"q":"{text}", "target":"{language}"}
-        </Payload>
-    </Set>
     <AssignVariable>
         <Name>text</Name>
-        <Template>{jsonPath($.text, request.content)}</Template>
-        <Ref/>
+        <Template>{jsonPath($.text,request.content)}</Template>
     </AssignVariable>
     <AssignVariable>
         <Name>language</Name>
-        <Template>{firstnonnull(request.queryparam.lang, propertyset.language.output)}</Template>
+        <Template>{firstnonnull(request.queryparam.lang,propertyset.language.output)}</Template>
     </AssignVariable>
     <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
     <AssignTo createNew="false" transport="http" type="request"/>
+    <Set>
+        <Payload contentType="application/json">{"q":"{text}","target":"{language}"}</Payload>
+    </Set>
 </AssignMessage>
