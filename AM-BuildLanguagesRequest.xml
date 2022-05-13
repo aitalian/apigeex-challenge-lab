@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage continueOnError="false" enabled="true" name="AM-BuildLanguagesRequest">
+    <DisplayName>AM-BuildLanguagesRequest</DisplayName>
+    <Properties/>
+    <Copy source="request">
+        <Headers/>
+        <QueryParams/>
+        <FormParams/>
+        <Payload/>
+        <Verb/>
+        <StatusCode/>
+        <ReasonPhrase/>
+        <Path/>
+    </Copy>
+    <Remove>
+        <Headers>
+            <Header name="h1"/>
+        </Headers>
+        <QueryParams>
+            <QueryParam name="q1"/>
+        </QueryParams>
+        <FormParams>
+            <FormParam name="f1"/>
+        </FormParams>
+        <Payload/>
+    </Remove>
+    <Add>
+        <Headers/>
+        <QueryParams/>
+        <FormParams/>
+    </Add>
+    <Set>
+        <Headers/>
+        <QueryParams/>
+        <FormParams/>
+        <Verb>POST</Verb>
+        <Path/>
+        <Payload contentType="application/json">
+            {"target":"{propertyset.language.caller}"}
+        </Payload>
+    </Set>
+    <AssignVariable>
+        <Name>name</Name>
+        <Value/>
+        <Ref/>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo createNew="true" transport="http" type="request"/>
+</AssignMessage>
