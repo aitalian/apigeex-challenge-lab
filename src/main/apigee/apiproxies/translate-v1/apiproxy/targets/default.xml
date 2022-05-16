@@ -1,5 +1,12 @@
 <TargetEndpoint name="default">
-	<HTTPTargetConnection>
-		<URL>https://translation.googleapis.com/language/translate/v2</URL>
-	</HTTPTargetConnection>
+    <HTTPTargetConnection>
+        <URL>https://translation.googleapis.com/language/translate/v2</URL>
+        <Authentication>
+            <GoogleAccessToken>
+                <Scopes>
+                    <Scope>https://www.googleapis.com/auth/cloud-translation</Scope>
+                </Scopes>
+            </GoogleAccessToken>
+        </Authentication>
+    </HTTPTargetConnection>
 </TargetEndpoint>

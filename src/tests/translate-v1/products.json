@@ -1,24 +1,25 @@
 [
   {
-    "name": "myproduct",
-    "displayName": "myproduct",
     "attributes": [
       {
         "name": "sample_attribute_0",
         "value": "sample_attribute_value_0"
       }
     ],
+    "scopes": [],
+    "environments": [],
     "apiResources": [
       "/",
       "/*",
       "/**"
     ],
-    "scopes": [],
-    "proxies": [],
-    "environments": [],
     "quota": "100",
     "quotaInterval": "1",
     "quotaTimeUnit": "minute",
-    "approvalType": "auto"
+    "name": "translate-v1",
+    "displayName": "translate-v1",
+    "proxies": [
+      "translate-v1"
+    ]
   }
 ]

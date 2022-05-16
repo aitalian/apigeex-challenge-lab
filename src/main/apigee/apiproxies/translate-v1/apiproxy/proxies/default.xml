@@ -1,4 +1,32 @@
 <ProxyEndpoint name="default">
+    <Flows>
+        <Flow name="translate">
+            <Request>
+                <Step>
+                    <Name>AM-BuildTranslateRequest</Name>
+                </Step>
+            </Request>
+            <Response>
+                <Step>
+                    <Name>AM-BuildTranslateResponse</Name>
+                </Step>
+            </Response>
+            <Condition>(proxy.pathsuffix MatchesPath "/") and (request.verb = "POST")</Condition>
+        </Flow>
+        <Flow name="getLanguages">
+            <Request>
+                <Step>
+                    <Name>AM-BuildLanguagesRequest</Name>
+                </Step>
+            </Request>
+            <Response>
+                <Step>
+                    <Name>JS-BuildLanguagesResponse</Name>
+                </Step>
+            </Response>
+            <Condition>(proxy.pathsuffix MatchesPath "/languages")</Condition>
+        </Flow>
+    </Flows>
 	<HTTPProxyConnection>
 		<BasePath>/translate/v1</BasePath>
 	</HTTPProxyConnection>

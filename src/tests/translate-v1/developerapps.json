@@ -1,0 +1,18 @@
+[
+  {
+    "attributes": [
+      {
+        "name": "sample_attribute_0",
+        "value": "sample_attribute_value_0"
+      }
+    ],
+    "developerEmail": "angelo.italiano@arctiq.ca",
+    "name": "translate-v1",
+    "displayName": "translate-v1",
+    "callbackUrl": "",
+    "apiProducts": [
+      "translate-v1"
+    ],
+    "expiryType": "never"
+  }
+]
