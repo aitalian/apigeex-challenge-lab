@@ -1,0 +1,24 @@
+[
+  {
+    "name": "myproduct",
+    "displayName": "myproduct",
+    "attributes": [
+      {
+        "name": "sample_attribute_0",
+        "value": "sample_attribute_value_0"
+      }
+    ],
+    "apiResources": [
+      "/",
+      "/*",
+      "/**"
+    ],
+    "scopes": [],
+    "proxies": [],
+    "environments": [],
+    "quota": "100",
+    "quotaInterval": "1",
+    "quotaTimeUnit": "minute",
+    "approvalType": "auto"
+  }
+]

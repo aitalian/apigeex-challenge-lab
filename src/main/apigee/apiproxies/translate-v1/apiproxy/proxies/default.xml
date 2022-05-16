@@ -1,0 +1,8 @@
+<ProxyEndpoint name="default">
+	<HTTPProxyConnection>
+		<BasePath>/translate/v1</BasePath>
+	</HTTPProxyConnection>
+	<RouteRule name="default-route">
+		<TargetEndpoint>default</TargetEndpoint>
+	</RouteRule>
+</ProxyEndpoint>
