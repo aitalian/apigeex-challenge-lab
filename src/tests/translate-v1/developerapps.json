@@ -6,12 +6,12 @@
         "value": "sample_attribute_value_0"
       }
     ],
-    "developerEmail": "angelo.italiano@arctiq.ca",
-    "name": "translate-v1",
-    "displayName": "translate-v1",
+    "developerEmail": "joe@example.com",
+    "name": "translate-app",
+    "displayName": "translate-app",
     "callbackUrl": "",
     "apiProducts": [
-      "translate-v1"
+      "translate-product"
     ],
     "expiryType": "never"
   }

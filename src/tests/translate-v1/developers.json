@@ -6,9 +6,9 @@
         "value": "sample_attribute_value_0"
       }
     ],
-    "email": "angelo.italiano@arctiq.ca",
-    "userName": "aitalian",
-    "firstName": "Angelo",
-    "lastName": "Italiano"
+    "email": "joe@example.com",
+    "userName": "joe",
+    "firstName": "Joe",
+    "lastName": "McDeveloper"
   }
 ]

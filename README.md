@@ -30,7 +30,11 @@ echo "Service Account Name for Apigee deployment: apigee-proxy@${GOOGLE_CLOUD_PR
 
 #### Optional: Running your own Apigee Evaluation Lab
 
-If you are running this in your own Apigee lab (not in Cloud Skills Boost), you'll need to enable an Apigee Evaluation first using the [Apigee UI](https://apigee.google.com). Follow the wizard and assume defaults were appropriate. For the last question in the wizard, do NOT create a Load Balancer (to save costs for testing) - your API will then only be accessible locally, via a test VM. Create that VM using the following commands in Cloud Shell:
+If you are running this in your own Apigee lab (not in Cloud Skills Boost), you'll need to enable an Apigee Evaluation first using the [Apigee UI](https://apigee.google.com). Follow the wizard and assume defaults were appropriate. For the last question in the wizard, do NOT create a Load Balancer (to save costs for testing) - your API will then only be accessible locally, via a test VM.
+
+In the Apigee UI, go to **Admin** > **Environments** > **Groups**, on the `eval-group` click on the *Edit* icon (pencil). In the **Hostnames** field, add a new line: `eval.example.com` and click *Save*. This allows us to replicate the same behaviour as the Challenge Lab by using the same hostname without having to override the Host header or additional parameters.
+
+Create that VM using the following commands in Cloud Shell:
 
 ```sh
 export PROJECT_ID=$GOOGLE_CLOUD_PROJECT
@@ -87,15 +91,20 @@ sudo -- sh -c "echo $INTERNAL_LOAD_BALANCER_IP $APIGEE_API_HOST eval.example.com
 curl -H "$AUTH" https://apigee.googleapis.com/v1/organizations/$PROJECT_ID | jq -r .caCertificate | base64 -d > cacert.crt
 sudo cp cacert.crt /usr/local/share/ca-certificates/apigee-cacert.crt
 sudo update-ca-certificates
+```
 
+You can test that this works on the VM by issuing the following calls:
+
+```sh
 # Send a test request to the hello-world API to verify connectivity
 curl -is -H "Host: $ENV_GROUP_HOSTNAME" \
   https://$APIGEE_API_HOST/hello-world \
   --cacert cacert.crt \
   --resolve example.$PROJECT_ID.apigee.internal:443:$INTERNAL_LOAD_BALANCER_IP
-```
 
-In the Apigee UI, go to **Admin** > **Environments** > **Groups**, on the `eval-group` click on the *Edit* icon (pencil). In the **Hostnames** field, add a new line: `eval.example.com` and click *Save*. This allows us to replicate the same behaviour as the Challenge Lab by using the same hostname without having to override the Host header or additional parameters.
+# Test using eval.example.com
+curl -i -k "https://eval.example.com/hello-world"
+```
 
 ### Step 2: Apigee UI
 
@@ -213,6 +222,16 @@ Back in the Challenge Lab UI:
 **NOTE** This task currently does NOT pass. A ticket is open with Qwiklabs.
 
 ## Task 3 Solution: Add API key verification and quota enforcement
+
+- Add API Product `translate-product` - see [products.json](src/tests/translate-v1/products.json)
+
+  - Public access, automatically approve access requests, available in eval environment
+
+  - Operation to allow access to the `translate-v1` proxy using a path of `/` (any request), `GET` and `POST` methods, operation quota of 10 requests per 1 minute
+
+- Create a Developer - see [developers.json](src/tests/translate-v1/developers.json)
+
+- Create a Developer App called `translate-app` with the `translate-product` API product associated with the `joe@example.com` developer - see [developerapps.json](src/tests/translate-v1/developerapps.json)
 
 
 ## Task 4 Solution: Add message logging
