@@ -11,6 +11,11 @@ My solution step-by-step and source files.
 In the GCP Console for the Apigee project, open the Cloud Shell and enter the following commands:
 
 ```sh
+# Enable prerequisite APIs
+gcloud services enable compute.googleapis.com
+gcloud services enable servicenetworking.googleapis.com
+gcloud services enable apigee.googleapis.com
+
 # Enable Cloud Translation API
 gcloud services enable translate.googleapis.com
 
@@ -102,8 +107,6 @@ Using the files in this repo, perform the following steps in order:
       1. AM-BuildLanguagesRequest
       2. AM-BuildTranslateRequest
       3. AM-BuildTranslateResponse
-4. Add Proxy Endpoints
+3. Add Proxy Endpoints
 
 Then Save, and Deploy.
-
-
