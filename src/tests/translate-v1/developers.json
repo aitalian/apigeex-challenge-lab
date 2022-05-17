@@ -1,11 +1,5 @@
 [
   {
-    "attributes": [
-      {
-        "name": "sample_attribute_0",
-        "value": "sample_attribute_value_0"
-      }
-    ],
     "email": "joe@example.com",
     "userName": "joe",
     "firstName": "Joe",

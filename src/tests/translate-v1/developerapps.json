@@ -1,14 +1,8 @@
 [
   {
-    "attributes": [
-      {
-        "name": "sample_attribute_0",
-        "value": "sample_attribute_value_0"
-      }
-    ],
-    "developerEmail": "joe@example.com",
     "name": "translate-app",
     "displayName": "translate-app",
+    "developerEmail": "joe@example.com",
     "callbackUrl": "",
     "apiProducts": [
       "translate-product"

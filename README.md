@@ -221,6 +221,8 @@ Back in the Challenge Lab UI:
 
 **NOTE** This task currently does NOT pass. A ticket is open with Qwiklabs.
 
+---
+
 ## Task 3 Solution: Add API key verification and quota enforcement
 
 - Add API Product `translate-product` - see [products.json](src/tests/translate-v1/products.json)
@@ -232,9 +234,12 @@ Back in the Challenge Lab UI:
 - Create a Developer - see [developers.json](src/tests/translate-v1/developers.json)
 
 - Create a Developer App called `translate-app` with the `translate-product` API product associated with the `joe@example.com` developer - see [developerapps.json](src/tests/translate-v1/developerapps.json)
+  - Under the Credentials section shown after creation, click *Show* on the *Key* - copy this Key to a safe place (it will be used in testing further down)
 
 - Add Policy: Security > Verify API Key named `VAK-VerifyKey` which should use the `Key` Header. See [VAK-VerifyKey.xml](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/VAK-VerifyKey.xml)
- 
+
+- Add Policy: Traffic Management > Quota named `Q-EnforceQuota`. See [Q-EnforceQuota.xml](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/Q-EnforceQuota.xml)
+
 - On the default Proxy Endpoint, add the PreFlow:
 
     ```xml
@@ -243,11 +248,49 @@ Back in the Challenge Lab UI:
             <Step>
                 <Name>VAK-VerifyKey</Name>
             </Step>
+            <Step>
+                <Name>Q-EnforceQuota</Name>
+            </Step>
         </Request>
         <Response/>
     </PreFlow>
     ```
 
+- Save and Deploy to eval.
+
+- Test - Fails (no API key)
+
+    ```sh
+    curl -i -k -X POST "https://eval.example.com/translate/v1?lang=de" \
+        -H "Content-Type:application/json" \
+        -d '{ "text": "Hello world!" }'
+    ```
+
+- Test - Fails (invalid API key)
+
+    ```sh
+    curl -i -k -X POST "https://eval.example.com/translate/v1?lang=de" \
+        -H "Content-Type:application/json" \
+        -H "Key: ABC123" \
+        -d '{ "text": "Hello world!" }'
+    ```
+
+- Test - Succeeds (when `$KEY` is set to a valid API Key - get this from the earlier step when setting up a Developer App)
+
+    ```sh
+    export KEY=REPLACEWITHVALIDKEY
+    curl -i -k -X POST "https://eval.example.com/translate/v1?lang=de" \
+        -H "Content-Type:application/json" \
+        -H "Key: $KEY" \
+        -d '{ "text": "Hello world!" }'
+    ```
+
+- Click the *Check my progress* button to complete the task.
+
+---
+
 ## Task 4 Solution: Add message logging
+
+---
 
 ## Task 5 Solution: Rewrite a backend error message
