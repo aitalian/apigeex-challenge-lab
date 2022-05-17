@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<VerifyAPIKey continueOnError="false" enabled="true" name="VAK-VerifyKey">
+    <DisplayName>VAK-VerifyKey</DisplayName>
+    <APIKey ref="request.header.Key"/>
+</VerifyAPIKey>

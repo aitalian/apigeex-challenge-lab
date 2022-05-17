@@ -233,9 +233,21 @@ Back in the Challenge Lab UI:
 
 - Create a Developer App called `translate-app` with the `translate-product` API product associated with the `joe@example.com` developer - see [developerapps.json](src/tests/translate-v1/developerapps.json)
 
+- Add Policy: Security > Verify API Key named `VAK-VerifyKey` which should use the `Key` Header. See [VAK-VerifyKey.xml](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/VAK-VerifyKey.xml)
+ 
+- On the default Proxy Endpoint, add the PreFlow:
+
+    ```xml
+    <PreFlow name="PreFlow">
+        <Request>
+            <Step>
+                <Name>VAK-VerifyKey</Name>
+            </Step>
+        </Request>
+        <Response/>
+    </PreFlow>
+    ```
 
 ## Task 4 Solution: Add message logging
 
-
 ## Task 5 Solution: Rewrite a backend error message
-
