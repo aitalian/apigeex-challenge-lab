@@ -4,7 +4,7 @@ https://partner.cloudskillsboost.google/focuses/32743?parent=catalog
 
 My solution step-by-step and source files.
 
-## Task 1 Solution
+## Task 1 Solution: Proxy the Cloud Translation API
 
 ### Step 1: Setup Using Cloud Shell
 
@@ -36,14 +36,14 @@ If you are running this in your own Apigee lab (not in Cloud Skills Boost), you'
 export PROJECT_ID=$GOOGLE_CLOUD_PROJECT
 export AUTH="Authorization: Bearer $(gcloud auth print-access-token)"
 export SUBNET=default
-export INSTANCE_NAME=apigeex-test-vm
+export VM_INSTANCE_NAME=apigeex-test-vm
 export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
 export VM_REGION=$(curl -s -H "$AUTH" https://apigee.googleapis.com/v1/organizations/$PROJECT_ID/instances | jq -r '.instances[0].location')
 export VM_ZONE=$(gcloud compute zones list | grep ${VM_REGION} | head -n 1 | awk '{print $2}')
 
 # Create VM
 gcloud compute --project=$PROJECT_ID \
-    instances create $INSTANCE_NAME \
+    instances create $VM_INSTANCE_NAME \
     --zone=$VM_ZONE \
     --machine-type=e2-micro \
     --subnet=$SUBNET \
@@ -58,45 +58,57 @@ gcloud compute --project=$PROJECT_ID \
     --image-project=debian-cloud \
     --boot-disk-size=10GB \
     --boot-disk-type=pd-standard \
-    --boot-disk-device-name=$INSTANCE_NAME \
+    --boot-disk-device-name=$VM_INSTANCE_NAME \
     --no-shielded-secure-boot \
     --shielded-vtpm \
     --shielded-integrity-monitoring \
     --reservation-affinity=any
 
+
 # Connect to VM
-gcloud compute ssh $INSTANCE_NAME --zone=$VM_ZONE --project=$PROJECT_ID
+gcloud compute ssh $VM_INSTANCE_NAME --zone=$VM_ZONE --project=$PROJECT_ID
 
 ### On the VM run the following commands
 sudo apt-get update -y
 sudo apt-get install -y jq
 
-export AUTH="Authorization: Bearer $(gcloud auth print-access-token)"
-export PROJECT_ID=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/project/project-id)
-export ENV_GROUP_HOSTNAME=$(curl -H "$AUTH" https://apigee.googleapis.com/v1/organizations/$PROJECT_ID/envgroups -s | jq -r '.environmentGroups[0].hostnames[0]')
-export INTERNAL_LOAD_BALANCER_IP=$(curl -H "$AUTH" https://apigee.googleapis.com/v1/organizations/$PROJECT_ID/instances -s | jq -r '.instances[0].host')
+cat <<EOF >> ~/.bashrc
+export AUTH="Authorization: Bearer \$(gcloud auth print-access-token)"
+export PROJECT_ID=\$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/project/project-id)
+export ENV_GROUP_HOSTNAME=\$(curl -H "\$AUTH" https://apigee.googleapis.com/v1/organizations/\$PROJECT_ID/envgroups -s | jq -r '.environmentGroups[0].hostnames[0]')
+export INTERNAL_LOAD_BALANCER_IP=\$(curl -H "\$AUTH" https://apigee.googleapis.com/v1/organizations/\$PROJECT_ID/instances -s | jq -r '.instances[0].host')
+export APIGEE_API_HOST=example.\$PROJECT_ID.apigee.internal
+EOF
+
+source ~/.bashrc
+
+sudo -- sh -c "echo $INTERNAL_LOAD_BALANCER_IP $APIGEE_API_HOST eval.example.com >> /etc/hosts"
 
 curl -H "$AUTH" https://apigee.googleapis.com/v1/organizations/$PROJECT_ID | jq -r .caCertificate | base64 -d > cacert.crt
+sudo cp cacert.crt /usr/local/share/ca-certificates/apigee-cacert.crt
+sudo update-ca-certificates
 
 # Send a test request to the hello-world API to verify connectivity
 curl -is -H "Host: $ENV_GROUP_HOSTNAME" \
-  https://example.$PROJECT_ID.apigee.internal/hello-world \
+  https://$APIGEE_API_HOST/hello-world \
   --cacert cacert.crt \
   --resolve example.$PROJECT_ID.apigee.internal:443:$INTERNAL_LOAD_BALANCER_IP
 ```
 
+In the Apigee UI, go to **Admin** > **Environments** > **Groups**, on the `eval-group` click on the *Edit* icon (pencil). In the **Hostnames** field, add a new line: `eval.example.com` and click *Save*. This allows us to replicate the same behaviour as the Challenge Lab by using the same hostname without having to override the Host header or additional parameters.
+
 ### Step 2: Apigee UI
 
-- In a new tab, navigate to the Apigee UI: https://apigee.google.com
+- In a new tab, navigate to the Apigee UI: [https://apigee.google.com](https://apigee.google.com)
 
 - Create a *Reverse Proxy* named `translate-v1` with a base path of `/translate/v1` and target URL: `https://translation.googleapis.com/language/translate/v2`. Click *Next*, and then *Next* again - do not make any other changes. Click *Create*.
 
 - Click *Edit Proxy* and then click the *Develop* tab.
 
-- Under *Target Endpoints*, click `default` to edit it. Copy/paste the contents from [Target Endpoints/default.xml](./Target%20Endpoints/default.xml) which adds the following section under `HTTPTargetConnection` for Authentication using a GoogleAccessToken:
+- Under *Target Endpoints*, click `default` to edit it. Copy/paste the contents from [targets/default.xml](src/main/apigee/apiproxies/translate-v1/targets/../apiproxy/targets/default.xml) which adds the following section under `HTTPTargetConnection` for Authentication using a GoogleAccessToken:
 
     ```xml
-          <Authentication>
+        <Authentication>
             <GoogleAccessToken>
                 <Scopes>
                     <Scope>https://www.googleapis.com/auth/cloud-translation</Scope>
@@ -121,13 +133,22 @@ curl -is -H "Host: $ENV_GROUP_HOSTNAME" \
   - In Cloud Shell, open an SSH connection to the `apigeex-test-vm`
 
     ```sh
-    gcloud compute ssh apigeex-test-vm --zone=us-west1-a --force-key-file-overwrite
+    export PROJECT_ID=$GOOGLE_CLOUD_PROJECT
+    export AUTH="Authorization: Bearer $(gcloud auth print-access-token)"
+    export VM_INSTANCE_NAME=apigeex-test-vm
+    export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
+    export VM_REGION=$(curl -s -H "$AUTH" https://apigee.googleapis.com/v1/organizations/$PROJECT_ID/instances | jq -r '.instances[0].location')
+    export VM_ZONE=$(gcloud compute zones list | grep ${VM_REGION} | head -n 1 | awk '{print $2}')
+
+    gcloud compute ssh $VM_INSTANCE_NAME --zone=$VM_ZONE --force-key-file-overwrite
     ```
 
   - On the test VM, run the following command:
 
     ```sh
-    curl -i -k -X POST "https://eval.example.com/translate/v1" -H "Content-Type: application/json" -d '{ "q": "Translate this text!", "target": "es" }'
+    curl -i -k -X POST "https://eval.example.com/translate/v1" \
+        -H "Content-Type: application/json" \
+        -d '{ "q": "Translate this text!", "target": "es" }'
     ```
 
   - Observe the response. Note the request and response are being proxied through as-is. It should look similar to the following:
@@ -145,25 +166,57 @@ curl -is -H "Host: $ENV_GROUP_HOSTNAME" \
     }
     ```
 
-### Step 4: Apigee UI
+### Step 4: Challenge Lab UI
 
 - Click the *Check my progress* button to complete the task.
 
 ---
 
-## Task 2 Solution
+## Task 2 Solution: Change the API request and response
 
-Using the files in this repo, perform the following steps in order:
+Using the files in this repo, perform the following steps in order using the Apigee UI:
 
 1. Add the Resources using contents from the referenced files:
-   1. JavaScript File - BuildLanguagesResponse.js
-   2. Property Set - language.properties
+   1. JavaScript File - [BuildLanguagesResponse.js](src/main/apigee/apiproxies/translate-v1/apiproxy/resources/jsc/BuildLanguagesResponse.js)
+   2. Property Set - [language.properties](src/main/apigee/apiproxies/translate-v1/apiproxy/resources/properties/language.properties)
 2. Add Policies using contents from the referenced files:
-   1. JavaScript: JS-BuildLanguagesResponse -> Script File: BuildLanguagesResponse.js
-   2. Assign Message:
-      1. AM-BuildLanguagesRequest
-      2. AM-BuildTranslateRequest
-      3. AM-BuildTranslateResponse
-3. Add Proxy Endpoints
+   1. Extension > JavaScript: JS-BuildLanguagesResponse -> Script File: BuildLanguagesResponse.js
+   2. Mediation > Assign Message:
+      1. [AM-BuildLanguagesRequest](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/AM-BuildLanguagesRequest.xml)
+      2. [AM-BuildTranslateRequest](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/AM-BuildTranslateRequest.xml)
+      3. [AM-BuildTranslateResponse](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/AM-BuildTranslateResponse.xml)
+3. Add Proxy Endpoints - see [proxies/default.xml](src/main/apigee/apiproxies/translate-v1/apiproxy/proxies/default.xml)
 
 Then Save, and Deploy.
+
+Run your tests:
+
+```sh
+# List of languages
+curl -i -k -X GET "https://eval.example.com/translate/v1/languages"
+
+# Translate to specified language (German)
+curl -i -k -X POST "https://eval.example.com/translate/v1?lang=de" \
+    -H "Content-Type:application/json" \
+    -d '{ "text": "Hello world!" }'
+
+# Translate to default language (Spanish)
+curl -i -k -X POST "https://eval.example.com/translate/v1" \
+    -H "Content-Type:application/json" \
+    -d '{ "text": "Hello world!" }'
+```
+
+Back in the Challenge Lab UI:
+
+- Click the *Check my progress* button to complete the task.
+
+**NOTE** This task currently does NOT pass. A ticket is open with Qwiklabs.
+
+## Task 3 Solution: Add API key verification and quota enforcement
+
+
+## Task 4 Solution: Add message logging
+
+
+## Task 5 Solution: Rewrite a backend error message
+
