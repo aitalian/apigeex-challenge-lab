@@ -1,25 +1,47 @@
 [
   {
+    "name": "translate-product",
+    "displayName": "translate-product",
+    "approvalType": "auto",
     "attributes": [
       {
-        "name": "sample_attribute_0",
-        "value": "sample_attribute_value_0"
+        "name": "access",
+        "value": "public"
       }
     ],
-    "scopes": [],
-    "environments": [],
     "apiResources": [
-      "/",
-      "/*",
-      "/**"
+      "/"
     ],
-    "quota": "100",
-    "quotaInterval": "1",
-    "quotaTimeUnit": "minute",
-    "name": "translate-v1",
-    "displayName": "translate-v1",
+    "environments": [
+      "eval"
+    ],
     "proxies": [
       "translate-v1"
-    ]
+    ],
+    "quota": "10",
+    "quotaInterval": "1",
+    "quotaTimeUnit": "minute",
+    "operationGroup": {
+      "operationConfigs": [
+        {
+          "apiSource": "translate-v1",
+          "operations": [
+            {
+              "resource": "/",
+              "methods": [
+                "GET",
+                "POST"
+              ]
+            }
+          ],
+          "quota": {
+            "limit": "100",
+            "interval": "1",
+            "timeUnit": "minute"
+          }
+        }
+      ],
+      "operationConfigType": "proxy"
+    }
   }
 ]
