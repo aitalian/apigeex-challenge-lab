@@ -291,6 +291,35 @@ Back in the Challenge Lab UI:
 
 ## Task 4 Solution: Add message logging
 
+- Add Policy: Extension > Message Logging named `ML-LogTranslation` - see [ML-LogTranslation.xml](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/ML-LogTranslation.xml)
+
+- On the default Proxy Endpoint, in the `translate` Flow, after the `AM-BuildTranslateResponse` Step, add the following Step in the Response:
+
+    ```xml
+                <Step>
+                    <Name>ML-LogTranslation</Name>
+                </Step>
+    ```
+
+- Save and Deploy to eval.
+
+- Test the MessageLogging policy is working:
+
+    ```sh
+    curl -i -k -X POST "https://eval.example.com/translate/v1?lang=de" \
+        -H "Content-Type:application/json" \
+        -H "Key: $KEY" \
+        -d '{ "text": "Hello world!" }'
+    ```
+
+    - In the GCP Console, visit the Logging page. In the query area, use the *Log name* dropdown to select `translate` and click *Apply*, and then click *Run query* after issuing the API request. There is a short delay, but the log should appear as follows:
+
+        ```
+        de|Hello world!|Hallo Welt!
+        ```
+
+- Click the *Check my progress* button to complete the task.
+
 ---
 
 ## Task 5 Solution: Rewrite a backend error message
