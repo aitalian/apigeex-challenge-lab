@@ -312,14 +312,57 @@ Back in the Challenge Lab UI:
         -d '{ "text": "Hello world!" }'
     ```
 
-    - In the GCP Console, visit the Logging page. In the query area, use the *Log name* dropdown to select `translate` and click *Apply*, and then click *Run query* after issuing the API request. There is a short delay, but the log should appear as follows:
+- In the GCP Console, visit the Logging page. In the query area, use the *Log name* dropdown to select `translate` and click *Apply*, and then click *Run query* after issuing the API request. There is a short delay, but the log should appear as follows:
 
-        ```
-        de|Hello world!|Hallo Welt!
-        ```
+    ```text
+    de|Hello world!|Hallo Welt!
+    ```
 
 - Click the *Check my progress* button to complete the task.
 
 ---
 
 ## Task 5 Solution: Rewrite a backend error message
+
+- Add Policy: Mediation > AssignMessage named `AM-BuildErrorResponse` - see [AM-BuildErrorResponse.xml](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/AM-BuildErrorResponse.xml)
+
+- On the default Target Endpoint, add a `FaultRules` section after `</HTTPTargetConnection>` as follows:
+
+    ```xml
+    <FaultRules>
+        <FaultRule name="invalid_request_rule">
+            <Step>
+                <Name>AM-BuildErrorResponse</Name>
+            </Step>
+            <Condition>(fault.name = "ErrorResponseCode")</Condition>
+        </FaultRule>
+    </FaultRules>
+    ```
+
+- Save and Deploy to eval.
+
+- Test - should work
+
+    ```sh
+    curl -i -k -X POST "https://eval.example.com/translate/v1?lang=de" \
+        -H "Content-Type:application/json" \
+        -H "Key: $KEY" \
+        -d '{ "text": "Hello world!" }'
+    ```
+
+- Test - invalid language query parameter, should return the rewritten error message
+
+    ```sh
+    curl -i -k -X POST "https://eval.example.com/translate/v1?lang=invalid" \
+        -H "Content-Type:application/json" \
+        -H "Key: $KEY" \
+        -d '{ "text": "Hello world!" }'
+    ```
+
+    The error returned should look like this:
+
+    ```json
+    { "error": "Invalid request. Verify the lang query parameter." }
+    ```
+
+- Click the *Check my progress* button to complete the task.
