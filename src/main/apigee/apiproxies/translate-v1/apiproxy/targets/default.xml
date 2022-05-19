@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <TargetEndpoint name="default">
     <HTTPTargetConnection>
         <URL>https://translation.googleapis.com/language/translate/v2</URL>

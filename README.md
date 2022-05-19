@@ -152,6 +152,8 @@ curl -i -k "https://eval.example.com/hello-world"
     gcloud compute ssh $VM_INSTANCE_NAME --zone=$VM_ZONE --force-key-file-overwrite
     ```
 
+    **NOTE**: Check the value of `$VM_ZONE` - it may not match the lab's expected zone, so you may have to override it if the SSH command above does not connect. As an example, `export VM_ZONE=us-west1-a` and then run the `gcloud compute ssh` command above to connect.
+
   - On the test VM, run the following command:
 
     ```sh
@@ -219,21 +221,25 @@ Back in the Challenge Lab UI:
 
 - Click the *Check my progress* button to complete the task.
 
-**NOTE** This task currently does NOT pass. A ticket is open with Qwiklabs.
+**NOTE** This task currently does NOT pass. A ticket is open with Qwiklabs. The error returned is:
+
+```text
+Please create the 'AM-BuildTranslateResponse' AssignMessage policy with the correct configuration and redeploy the API proxy.
+```
 
 ---
 
 ## Task 3 Solution: Add API key verification and quota enforcement
 
-- Add API Product `translate-product` - see [products.json](src/tests/translate-v1/products.json)
+- Publish > API Products > +Create. Add API Product `translate-product` - see [products.json](src/tests/translate-v1/products.json)
 
   - Public access, automatically approve access requests, available in eval environment
 
   - Operation to allow access to the `translate-v1` proxy using a path of `/` (any request), `GET` and `POST` methods, operation quota of 10 requests per 1 minute
 
-- Create a Developer - see [developers.json](src/tests/translate-v1/developers.json)
+- Publish > Developers > +Developer. Create a Developer - see [developers.json](src/tests/translate-v1/developers.json)
 
-- Create a Developer App called `translate-app` with the `translate-product` API product associated with the `joe@example.com` developer - see [developerapps.json](src/tests/translate-v1/developerapps.json)
+- Publish > Apps > +App. Create a Developer App called `translate-app` with the `translate-product` API product associated with the `joe@example.com` developer - see [developerapps.json](src/tests/translate-v1/developerapps.json)
   - Under the Credentials section shown after creation, click *Show* on the *Key* - copy this Key to a safe place (it will be used in testing further down)
 
 - Add Policy: Security > Verify API Key named `VAK-VerifyKey` which should use the `Key` Header. See [VAK-VerifyKey.xml](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/VAK-VerifyKey.xml)
@@ -243,17 +249,17 @@ Back in the Challenge Lab UI:
 - On the default Proxy Endpoint, add the PreFlow:
 
     ```xml
-    <PreFlow name="PreFlow">
-        <Request>
-            <Step>
-                <Name>VAK-VerifyKey</Name>
-            </Step>
-            <Step>
-                <Name>Q-EnforceQuota</Name>
-            </Step>
-        </Request>
-        <Response/>
-    </PreFlow>
+        <PreFlow name="PreFlow">
+            <Request>
+                <Step>
+                    <Name>VAK-VerifyKey</Name>
+                </Step>
+                <Step>
+                    <Name>Q-EnforceQuota</Name>
+                </Step>
+            </Request>
+            <Response/>
+        </PreFlow>
     ```
 
 - Save and Deploy to eval.
@@ -287,6 +293,12 @@ Back in the Challenge Lab UI:
 
 - Click the *Check my progress* button to complete the task.
 
+**NOTE** This task currently does NOT pass. A ticket is open with Qwiklabs. The error returned is:
+
+```text
+Please create the 'translate-product' API product with the correct configuration.
+```
+
 ---
 
 ## Task 4 Solution: Add message logging
@@ -296,9 +308,9 @@ Back in the Challenge Lab UI:
 - On the default Proxy Endpoint, in the `translate` Flow, after the `AM-BuildTranslateResponse` Step, add the following Step in the Response:
 
     ```xml
-                <Step>
-                    <Name>ML-LogTranslation</Name>
-                </Step>
+                    <Step>
+                        <Name>ML-LogTranslation</Name>
+                    </Step>
     ```
 
 - Save and Deploy to eval.
@@ -329,14 +341,14 @@ Back in the Challenge Lab UI:
 - On the default Target Endpoint, add a `FaultRules` section after `</HTTPTargetConnection>` as follows:
 
     ```xml
-    <FaultRules>
-        <FaultRule name="invalid_request_rule">
-            <Step>
-                <Name>AM-BuildErrorResponse</Name>
-            </Step>
-            <Condition>(fault.name = "ErrorResponseCode")</Condition>
-        </FaultRule>
-    </FaultRules>
+        <FaultRules>
+            <FaultRule name="invalid_request_rule">
+                <Step>
+                    <Name>AM-BuildErrorResponse</Name>
+                </Step>
+                <Condition>(fault.name = "ErrorResponseCode")</Condition>
+            </FaultRule>
+        </FaultRules>
     ```
 
 - Save and Deploy to eval.
