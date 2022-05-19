@@ -1,4 +1,4 @@
-# Develop and Secure APIs with Apigee X: Challenge Lab
+# Develop and Secure APIs with Apigee X: Challenge Lab (GSP363)
 
 https://partner.cloudskillsboost.google/focuses/32743?parent=catalog
 
