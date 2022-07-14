@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<AssignMessage name="AM-BuildErrorResponse">
-    <DisplayName>AM-BuildErrorResponse.xml</DisplayName>
+<AssignMessage continueOnError="false" enabled="true" name="AM-BuildErrorResponse">
+    <DisplayName>AM-BuildErrorResponse</DisplayName>
     <Set>
         <Payload contentType="application/json">{ "error": "Invalid request. Verify the lang query parameter." }</Payload>
     </Set>
