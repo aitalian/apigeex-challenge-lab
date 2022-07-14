@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<MessageLogging async="false" continueOnError="false" enabled="true" name="ML-LogTranslation">
+<MessageLogging continueOnError="false" enabled="true" name="ML-LogTranslation">
     <DisplayName>ML-LogTranslation</DisplayName>
     <CloudLogging>
         <LogName>projects/{organization.name}/logs/translate</LogName>
