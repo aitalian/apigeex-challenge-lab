@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Quota async="false" continueOnError="false" enabled="true" name="Q-EnforceQuota" type="calendar">
+<Quota continueOnError="false" enabled="true" name="Q-EnforceQuota" type="calendar">
     <DisplayName>Q-EnforceQuota</DisplayName>
     <StartTime>2022-05-17 12:00:00</StartTime>
+    <Distributed>true</Distributed>
+    <Synchronous>true</Synchronous>
     <UseQuotaConfigInAPIProduct stepName="VAK-VerifyKey">
         <DefaultConfig>
             <Allow countRef="verifyapikey.VAK-VerifyKey.apiproduct.developer.quota.limit">5</Allow>
