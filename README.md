@@ -221,7 +221,7 @@ Back in the Challenge Lab UI:
 
 - Click the *Check my progress* button to complete the task.
 
-**NOTE** This task currently does NOT pass. A ticket is open with Qwiklabs. The error returned is:
+**NOTE** In `AM-BuildTranslateResponse`, the response payload JSON needs to be on a single line (no spaces or line breaks) in order for the Challenge's assessment checker to pass. Otherwise, you will be presented with the following error, even though tests using manual API calls yield the correct result:
 
 ```text
 Please create the 'AM-BuildTranslateResponse' AssignMessage policy with the correct configuration and redeploy the API proxy.
@@ -294,10 +294,6 @@ Please create the 'AM-BuildTranslateResponse' AssignMessage policy with the corr
 - Click the *Check my progress* button to complete the task.
 
 **NOTE** This task currently does NOT pass. A ticket is open with Qwiklabs. The errors returned are:
-
-```text
-Please create the 'translate-product' API product with the correct configuration.
-```
 
 ```text
 Please add the 'Q-EnforceQuota' Quota policy with the correct configuration to the proxy endpoint preflow and redeploy the API proxy.

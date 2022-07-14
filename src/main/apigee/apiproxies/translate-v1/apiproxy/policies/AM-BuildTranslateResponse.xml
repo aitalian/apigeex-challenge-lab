@@ -8,8 +8,6 @@
     <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
     <AssignTo createNew="true" transport="http" type="response"/>
     <Set>
-        <Payload contentType="application/json">{
-  "translated": "{translated}"
-}</Payload>
+        <Payload contentType="application/json">{"translated":"{translated}"}</Payload>
     </Set>
 </AssignMessage>
