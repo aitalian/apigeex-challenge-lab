@@ -6,9 +6,9 @@
     <Synchronous>true</Synchronous>
     <UseQuotaConfigInAPIProduct stepName="VAK-VerifyKey">
         <DefaultConfig>
-            <Allow countRef="verifyapikey.VAK-VerifyKey.apiproduct.developer.quota.limit">5</Allow>
-            <Interval ref="verifyapikey.VAK-VerifyKey.apiproduct.developer.quota.interval">1</Interval>
-            <TimeUnit ref="verifyapikey.VAK-VerifyKey.apiproduct.developer.quota.timeunit">hour</TimeUnit>
+            <Allow>5</Allow>
+            <Interval>1</Interval>
+            <TimeUnit>hour</TimeUnit>
         </DefaultConfig>
     </UseQuotaConfigInAPIProduct>
 </Quota>
