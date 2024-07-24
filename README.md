@@ -231,15 +231,15 @@ Please create the 'AM-BuildTranslateResponse' AssignMessage policy with the corr
 
 ## Task 3 Solution: Add API key verification and quota enforcement
 
-- Publish > API Products > +Create. Add API Product `translate-product` - see [products.json](src/tests/translate-v1/products.json)
+- Distribution > API Products > +Create. Add API Product `translate-product` - see [products.json](src/tests/translate-v1/products.json)
 
   - Public access, automatically approve access requests, available in eval environment
 
   - Operation to allow access to the `translate-v1` proxy using a path of `/` (any request), `GET` and `POST` methods, operation quota of 10 requests per 1 minute
 
-- Publish > Developers > +Developer. Create a Developer - see [developers.json](src/tests/translate-v1/developers.json)
+- Distribution > Developers > +Developer. Create a Developer - see [developers.json](src/tests/translate-v1/developers.json)
 
-- Publish > Apps > +App. Create a Developer App called `translate-app` with the `translate-product` API product associated with the `joe@example.com` developer - see [developerapps.json](src/tests/translate-v1/developerapps.json)
+- Distribution > Apps > +App. Create a Developer App called `translate-app` with the `translate-product` API product associated with the `joe@example.com` developer - see [developerapps.json](src/tests/translate-v1/developerapps.json)
   - Under the Credentials section shown after creation, click *Show* on the *Key* - copy this Key to a safe place (it will be used in testing further down)
 
 - Add Policy: Security > Verify API Key named `VAK-VerifyKey` which should use the `Key` Header. See [VAK-VerifyKey.xml](src/main/apigee/apiproxies/translate-v1/apiproxy/policies/VAK-VerifyKey.xml)
