@@ -142,17 +142,9 @@ curl -i -k "https://eval.example.com/hello-world"
   - In Cloud Shell, open an SSH connection to the `apigeex-test-vm`
 
     ```sh
-    export PROJECT_ID=$GOOGLE_CLOUD_PROJECT
-    export AUTH="Authorization: Bearer $(gcloud auth print-access-token)"
-    export VM_INSTANCE_NAME=apigeex-test-vm
-    export PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
-    export VM_REGION=$(curl -s -H "$AUTH" https://apigee.googleapis.com/v1/organizations/$PROJECT_ID/instances | jq -r '.instances[0].location')
-    export VM_ZONE=$(gcloud compute zones list | grep ${VM_REGION} | head -n 1 | awk '{print $2}')
-
-    gcloud compute ssh $VM_INSTANCE_NAME --zone=$VM_ZONE --force-key-file-overwrite
+    TEST_VM_ZONE=$(gcloud compute instances list --filter="name=('apigeex-test-vm')" --format "value(zone)")
+    gcloud compute ssh apigeex-test-vm --zone=${TEST_VM_ZONE} --force-key-file-overwrite
     ```
-
-    **NOTE**: Check the value of `$VM_ZONE` - it may not match the lab's expected zone, so you may have to override it if the SSH command above does not connect. As an example, `export VM_ZONE=us-west1-a` and then run the `gcloud compute ssh` command above to connect.
 
   - On the test VM, run the following command:
 
